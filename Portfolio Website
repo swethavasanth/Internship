@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio with Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; text-align: center; margin: 0; padding: 0; }
+    h1, h2 { color: purple; }
+    .page { display: none; padding: 40px; }
+    .active { display: block; }
+    input, label { margin: 8px auto; display: block; }
+    input[type="text"], input[type="email"], input[type="tel"] {
+      padding: 10px; width: 250px; border-radius: 5px; border: 1px solid #ccc;
+    }
+    .btn, .option, .skill, .project {
+      background: purple; color: white; padding: 12px 20px;
+      border-radius: 6px; margin: 10px auto; width: 60%;
+      cursor: pointer; display: block; transition: background 0.3s;
+    }
+    .btn:hover, .option:hover, .skill:hover, .project:hover { background: black; }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 0: Login -->
+  <div id="loginPage" class="page active">
+    <h1>Login</h1>
+    <input type="email" id="email" placeholder="Enter Email ID" required>
+    <input type="tel" id="phone" placeholder="Enter Phone Number" required>
+    
+    <h3>Select Your Skills</h3>
+    <label><input type="checkbox" value="Python" class="skillSelect"> Python</label>
+    <label><input type="checkbox" value="Java" class="skillSelect"> Java</label>
+    <label><input type="checkbox" value="C" class="skillSelect"> C</label>
+    <label><input type="checkbox" value="HTML & CSS" class="skillSelect"> HTML & CSS</label>
+    <label><input type="checkbox" value="JavaScript" class="skillSelect"> JavaScript</label>
+    <label><input type="checkbox" value="C++" class="skillSelect"> C++</label>
+
+    <button class="btn" onclick="login()">Login</button>
+  </div>
+
+  <!-- PAGE 1: Portfolio Home -->
+  <div id="page1" class="page">
+    <h1>My Portfolio</h1>
+    <div class="option" onclick="goToPage2('about')">About Me</div>
+    <div class="option" onclick="goToPage2('projects')">Projects</div>
+    <div class="option" onclick="goToPage2('skills')">Skills</div>
+    <div class="option" onclick="goToPage2('contact')">Contact</div>
+  </div>
+
+  <!-- PAGE 2: About / Projects / Skills / Contact -->
+  <div id="page2" class="page">
+    <h2 id="page2Title"></h2>
+    <p id="page2Content"></p>
+    <div id="skillsList"></div>
+    <div id="projectsList"></div>
+    <button class="btn" onclick="backToPage1()">⬅ Back</button>
+  </div>
+
+  <!-- PAGE 3: Skill or Project Details -->
+  <div id="page3" class="page">
+    <h2 id="detailTitle"></h2>
+    <p id="detailContent"></p>
+    <button class="btn" onclick="backToPage2()">⬅ Back</button>
+  </div>
+
+  <script>
+    let lastOption = ""; 
+    let userEmail = "";
+    let userPhone = "";
+    let userSkills = [];
+
+    // Login
+    function login() {
+      userEmail = document.getElementById("email").value;
+      userPhone = document.getElementById("phone").value;
+
+      let skillCheckboxes = document.querySelectorAll(".skillSelect");
+      userSkills = [];
+      skillCheckboxes.forEach(cb => {
+        if (cb.checked) {
+          userSkills.push(cb.value);
+        }
+      });
+
+      if (userEmail === "" || userPhone === "" || userSkills.length === 0) {
+        alert("Please enter Email, Phone, and select at least one skill!");
+      } else {
+        document.getElementById("loginPage").classList.remove("active");
+        document.getElementById("page1").classList.add("active");
+      }
+    }
+
+    // Page 2 navigation
+    function goToPage2(option) {
+      document.getElementById("page1").classList.remove("active");
+      document.getElementById("page2").classList.add("active");
+      document.getElementById("page3").classList.remove("active");
+
+      lastOption = option;
+      let title = document.getElementById("page2Title");
+      let content = document.getElementById("page2Content");
+      let skillsList = document.getElementById("skillsList");
+      let projectsList = document.getElementById("projectsList");
+
+      title.innerText = "";
+      content.innerText = "";
+      skillsList.innerHTML = "";
+      projectsList.innerHTML = "";
+
+      if (option === "about") {
+        title.innerText = "About Me";
+        content.innerText = "Hello! I'm Swetha, a Computer Science student passionate about coding, web development, and problem-solving. I love learning new technologies and building creative projects!";
+      } 
+      else if (option === "projects") {
+        title.innerText = "Projects";
+        let projects = ["Portfolio Website", "Weather App", "Student Management System"];
+        projects.forEach(proj => {
+          let div = document.createElement("div");
+          div.className = "project";
+          div.innerText = proj;
+          div.onclick = () => goToPage3(proj);
+          projectsList.appendChild(div);
+        });
+      } 
+      else if (option === "skills") {
+        title.innerText = "Skills";
+        userSkills.forEach(skill => {
+          let div = document.createElement("div");
+          div.className = "skill";
+          div.innerText = skill;
+          div.onclick = () => goToPage3(skill);
+          skillsList.appendChild(div);
+        });
+      } 
+      else if (option === "contact") {
+        title.innerText = "Contact";
+        content.innerText = "Email: " + userEmail + " | Phone: " + userPhone;
+      }
+    }
+
+    // Page 3 for skills/projects
+    function goToPage3(item) {
+      document.getElementById("page2").classList.remove("active");
+      document.getElementById("page3").classList.add("active");
+
+      let title = document.getElementById("detailTitle");
+      let content = document.getElementById("detailContent");
+
+      title.innerText = item;
+
+      // Skill details
+      if (item === "Python") content.innerText = "Python is a versatile high-level programming language widely used for AI, ML, web development, and automation.";
+      else if (item === "Java") content.innerText = "Java is an object-oriented language, popular for building platform-independent applications and Android development.";
+      else if (item === "C") content.innerText = "C is a powerful low-level programming language, often used in system programming and embedded systems.";
+      else if (item === "HTML & CSS") content.innerText = "HTML is used for structuring webpages and CSS is used for styling them to make them attractive.";
+      else if (item === "JavaScript") content.innerText = "JavaScript is a scripting language used to add interactivity and dynamic behavior to websites.";
+      else if (item === "C++") content.innerText = "C++ is an extension of C, widely used in game development, competitive programming, and system software.";
+
+      // Project details
+      else if (item === "Portfolio Website") content.innerText = "A personal portfolio website showcasing my skills, projects, and achievements.";
+      else if (item === "Weather App") content.innerText = "A web application that provides real-time weather updates using API integration.";
+      else if (item === "Student Management System") content.innerText = "A project to manage student details, grades, and courses efficiently.";
+    }
+
+    // Back navigation
+    function backToPage1() {
+      document.getElementById("page2").classList.remove("active");
+      document.getElementById("page1").classList.add("active");
+    }
+
+    function backToPage2() {
+      document.getElementById("page3").classList.remove("active");
+      document.getElementById("page2").classList.add("active");
+      goToPage2(lastOption); // rebuild skills/projects
+    }
+  </script>
+</body>
+</html>
